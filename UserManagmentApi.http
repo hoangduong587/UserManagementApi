@@ -1,0 +1,172 @@
+@UserManagmentApi_HostAddress = https://localhost:7041
+
+# ========================================
+# AUTHENTICATION TESTS
+# ========================================
+
+### Test without API key (should return 401)
+GET {{UserManagmentApi_HostAddress}}/api/user
+
+###
+
+### Test with invalid API key (should return 401)
+GET {{UserManagmentApi_HostAddress}}/api/user
+X-API-Key: invalid-key-12345
+
+###
+
+### Test with valid API key (should return 200)
+GET {{UserManagmentApi_HostAddress}}/api/user
+X-API-Key: dev-api-key-12345
+
+###
+
+# ========================================
+# AUTHENTICATED CRUD OPERATIONS
+# ========================================
+
+### Get all users (with valid API key)
+GET {{UserManagmentApi_HostAddress}}/api/user
+X-API-Key: dev-api-key-12345
+
+###
+
+### Get user by ID (with valid API key)
+GET {{UserManagmentApi_HostAddress}}/api/user/1
+X-API-Key: dev-api-key-12345
+
+###
+
+### Create new user (with valid API key)
+POST {{UserManagmentApi_HostAddress}}/api/user
+Content-Type: application/json
+X-API-Key: dev-api-key-12345
+
+{
+    "name": "Alice Wilson",
+    "salary": 65000,
+    "department": "Marketing"
+}
+
+###
+
+### Update existing user (with valid API key)
+PUT {{UserManagmentApi_HostAddress}}/api/user/1
+Content-Type: application/json
+X-API-Key: dev-api-key-12345
+
+{
+    "name": "John Doe Updated",
+    "salary": 55000,
+    "department": "IT"
+}
+
+###
+
+### Delete user (with valid API key)
+DELETE {{UserManagmentApi_HostAddress}}/api/user/3
+X-API-Key: dev-api-key-12345
+
+###
+
+# ========================================
+# ERROR HANDLING TESTS (with authentication)
+# ========================================
+
+### Test 400 Bad Request (ArgumentException) - with valid API key
+GET {{UserManagmentApi_HostAddress}}/api/user/test-error/argument
+X-API-Key: dev-api-key-12345
+
+###
+
+### Test 404 Not Found (KeyNotFoundException) - with valid API key
+GET {{UserManagmentApi_HostAddress}}/api/user/test-error/notfound
+X-API-Key: dev-api-key-12345
+
+###
+
+### Test 401 Unauthorized (UnauthorizedAccessException) - with valid API key
+GET {{UserManagmentApi_HostAddress}}/api/user/test-error/unauthorized
+X-API-Key: dev-api-key-12345
+
+###
+
+### Test 409 Conflict (InvalidOperationException) - with valid API key
+GET {{UserManagmentApi_HostAddress}}/api/user/test-error/conflict
+X-API-Key: dev-api-key-12345
+
+###
+
+### Test 500 Internal Server Error (Generic Exception) - with valid API key
+GET {{UserManagmentApi_HostAddress}}/api/user/test-error/server
+X-API-Key: dev-api-key-12345
+
+###
+
+### Test validation error - Create user with missing name (with valid API key)
+POST {{UserManagmentApi_HostAddress}}/api/user
+Content-Type: application/json
+X-API-Key: dev-api-key-12345
+
+{
+    "name": "",
+    "salary": 50000,
+    "department": "IT"
+}
+
+###
+
+### Test natural 404 - Get non-existent user (with valid API key)
+GET {{UserManagmentApi_HostAddress}}/api/user/999
+X-API-Key: dev-api-key-12345
+
+###
+
+# ========================================
+# HTTP LOGGING DEMONSTRATION
+# ========================================
+# Note: Check console output to see detailed request/response logs
+
+### Simple GET request - demonstrates basic logging
+GET {{UserManagmentApi_HostAddress}}/api/user/1
+X-API-Key: dev-api-key-12345
+
+###
+
+### POST request with JSON body - demonstrates request body logging
+POST {{UserManagmentApi_HostAddress}}/api/user
+Content-Type: application/json
+X-API-Key: dev-api-key-12345
+
+{
+    "name": "Logging Test User",
+    "salary": 70000,
+    "department": "Quality Assurance"
+}
+
+###
+
+### PUT request with JSON body - demonstrates request/response body logging
+PUT {{UserManagmentApi_HostAddress}}/api/user/2
+Content-Type: application/json
+X-API-Key: dev-api-key-12345
+
+{
+    "name": "Updated User for Logging",
+    "salary": 75000,
+    "department": "DevOps"
+}
+
+###
+
+### Error scenario - demonstrates error logging with timing
+GET {{UserManagmentApi_HostAddress}}/api/user/test-error/server
+X-API-Key: dev-api-key-12345
+
+###
+
+### Authentication failure - demonstrates 401 response logging
+GET {{UserManagmentApi_HostAddress}}/api/user
+X-API-Key: invalid-key-for-logging-test
+
+###
